@@ -288,96 +288,6 @@
       }
     }
 
-    /* Upload Styles */
-    .upload-container {
-      margin: 20px 0;
-    }
-
-    .upload-area {
-      border: 3px dashed #ff6b9d;
-      border-radius: 15px;
-      padding: 30px 20px;
-      background: rgba(255, 182, 193, 0.1);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-      min-height: 200px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .upload-area:hover {
-      background: rgba(255, 182, 193, 0.2);
-      border-color: #e91e63;
-      transform: scale(1.02);
-    }
-
-    .upload-area.dragover {
-      background: rgba(255, 182, 193, 0.3);
-      border-color: #d63384;
-    }
-
-    .upload-icon {
-      font-size: 3rem;
-      margin-bottom: 10px;
-      animation: bounce 2s infinite;
-    }
-
-    .file-input {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      opacity: 0;
-      cursor: pointer;
-    }
-
-    .photo-preview {
-      text-align: center;
-      background: rgba(255, 255, 255, 0.9);
-      border-radius: 15px;
-      padding: 20px;
-      border: 2px solid #ff6b9d;
-    }
-
-    .photo-preview img {
-      max-width: 100%;
-      max-height: 300px;
-      border-radius: 10px;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-      margin-bottom: 15px;
-    }
-
-    .photo-actions {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .memory-saved {
-      text-align: center;
-      background: linear-gradient(135deg, rgba(255, 182, 193, 0.3), rgba(255, 105, 157, 0.2));
-      border-radius: 15px;
-      padding: 30px;
-      border: 2px solid #ff6b9d;
-    }
-
-    .success-animation {
-      font-size: 4rem;
-      animation: successBounce 1s ease-out;
-      margin-bottom: 15px;
-    }
-
-    @keyframes successBounce {
-      0% { transform: scale(0) rotate(0deg); }
-      50% { transform: scale(1.2) rotate(180deg); }
-      100% { transform: scale(1) rotate(360deg); }
-    }
-
     .audio-animate {
       box-shadow: 0 0 10px #ff6b9d, 0 0 20px #ffc3e1;
       animation: audioPulse 2.5s infinite alternate;
@@ -482,37 +392,27 @@
       <!-- Stage 3: Final Message -->
       <div class="stage" id="stage3">
         <div class="birthday-message">
-          <h1><span aria-label="waving hand" role="img">👋</span> <strong>Hi Vina!</strong></h1>
+          <h1><span aria-label="waving hand" role="img">👋</span> <strong>Hey Vina!</strong></h1>
           <p>
-            <span aria-label="sparkles" role="img">✨</span>
-            <strong>Happy special birthday</strong> to someone truly unforgettable.<br>
-            Today, the world feels a little brighter, because it's the day <strong>you</strong> came into it. 
+            <strong>Happy birthday to someone really special!</strong> The world feels a bit brighter today—probably because it's your day. 
             <span aria-label="cherry blossom" role="img">🌸</span>
           </p>
           <p>
-            Across oceans, beneath stars, and under the same sky, I somehow found myself walking beside you.<br>
-            What are the odds that amidst all the galaxies, I'd meet someone who feels like <strong>home</strong>? 
+            Somehow, out of all the people in the world, I ended up walking beside you. Isn't it crazy? Out of all the stars and places, I met someone who truly feels like <strong>home</strong>. 
             <span aria-label="star" role="img">⭐</span><span aria-label="earth" role="img">🌍</span>
           </p>
           <p>
-            You bring <strong>light</strong> where there's dullness, <strong>calm</strong> in the chaos, and <strong>warmth</strong> that stays long after the moment passes.<br>
-            Your presence makes everything more beautiful.
+            You <strong>light up</strong> the dark moments, bring <strong>peace</strong> when things get messy, and leave a <strong>warm feeling</strong> that lasts. Just being around you makes everything better.
           </p>
           <p>
-            May this next chapter of your life overflow with <strong>joy</strong>, <strong>wonder</strong>, and all the <strong>love</strong> you deserve.<br>
-            And as you chase your dreams of becoming an amazing pharmacist, I hope the path rises to meet you, filled with purpose, pride, and every success you've worked so hard for. 
-            <span aria-label="herb" role="img">🌿</span><span aria-label="pill" role="img">💊</span>
+            I hope this next part of your life is full of <strong>happiness</strong>, <strong>magic</strong>, and all the love you deserve. Wishing you a long, healthy, and joyful life. And I really hope you find someone who totally gets you, treats you right, and never makes you cry.
           </p>
           <p>
-            I'm grateful to walk this part of your journey with you.<br>
-            <strong>Happy birthday, you're a rare kind of magic.</strong> 
+            <strong>Happy birthday, Vinaaa!</strong> 
             <span aria-label="birthday cake" role="img">🎂</span><span aria-label="sparkles" role="img">✨</span>
           </p>
         </div>
         <div class="space"></div>
-        <div class="button-container">
-          <button class="next-btn" onclick="toUploadStage()" aria-label="Upload Photo">Click Me</button>
-        </div>
         <audio controls preload="none" aria-label="Birthday song" class="audio-animate">
           <source src="hbd.mp3" type="audio/mp3">
           Your browser does not support the audio element.
@@ -541,42 +441,11 @@
           <button class="choice-btn" onclick="openGift()" aria-label="Change mind and open gift">Actually... open it! 💝</button>
         </div>
       </div>
-
-      <!-- Stage 6: Upload Photo -->
-      <div class="stage" id="stage6">
-        <h2>Capture This Moment! 📸</h2>
-        <p class="surprise-text">Selfie Sama Makanannya dong</p>
-        
-        <div class="upload-container">
-          <div class="upload-area" id="uploadArea" onclick="triggerFileInput()">
-            <div class="upload-icon">📷</div>
-            <h3>Tap to add your photo</h3>
-            <p>or drag and drop here</p>
-            <input type="file" accept="image/*" id="photoInput" class="file-input" onchange="handleFileSelect(event)">
-          </div>
-          
-          <div class="photo-preview" id="photoPreview" style="display: none;">
-            <img id="preview" src="" alt="Your photo">
-            <div class="photo-actions">
-              <button class="choice-btn" onclick="changePhoto()">Change Photo 🔄</button>
-              <button class="next-btn" onclick="saveMemory()">Save Memory ✨</button>
-            </div>
-          </div>
-        </div>
-        
-        <div class="memory-saved" id="memorySaved" style="display: none;">
-          <div class="success-animation">🎉</div>
-          <h3>Memory Saved!</h3>
-          <p>This special moment is now captured forever 💝</p>
-          <button class="next-btn" onclick="restartExperience()">Celebrate Again! 🎂</button>
-        </div>
-      </div>
     </div>
   </div>
 
   <script>
     let currentStage = 1;
-    let uploadedPhoto = null;
 
     // Add loading state management
     window.addEventListener('load', function() {
@@ -592,7 +461,7 @@
 
     function openGift() {
       // Hide all stages
-      for (let i = 1; i <= 6; i++) {
+      for (let i = 1; i <= 5; i++) {
         const stage = document.getElementById('stage' + i);
         if (stage) stage.classList.remove('active');
       }
@@ -614,171 +483,23 @@
       currentStage = 5;
     }
 
-    function toUploadStage() {
-      for (let i = 1; i <= 6; i++) {
-        const stage = document.getElementById('stage' + i);
-        if (stage) stage.classList.remove('active');
-      }
-      document.getElementById('stage6').classList.add('active');
-      currentStage = 6;
-    }
-
-// Add this configuration at the top of your JavaScript file
-const GITHUB_CONFIG = {
-  owner: 'LilSixty-web',
-  repo: 'lilsixty-web.github.io',
-  token: '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', // Replace with your actual GitHub token
-  branch: 'main' // or 'master' depending on your default branch
-};
-
-// Status display function
-function showStatus(message, type) {
-  const statusDiv = document.getElementById('statusMessage') || createStatusDiv();
-  statusDiv.textContent = message;
-  statusDiv.className = `status-message ${type}`;
-  statusDiv.style.display = 'block';
-  
-  // Hide after 5 seconds for success/info messages
-  if (type === 'success' || type === 'info') {
-    setTimeout(() => {
-      statusDiv.style.display = 'none';
-    }, 5000);
-  }
-}
-
-function createStatusDiv() {
-  const statusDiv = document.createElement('div');
-  statusDiv.id = 'statusMessage';
-  statusDiv.style.cssText = `
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-weight: bold;
-    z-index: 1000;
-    display: none;
-  `;
-  document.body.appendChild(statusDiv);
-  return statusDiv;
-}
-
-// Convert file to base64
-function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = error => reject(error);
-  });
-}
-
-// Generate unique filename
-function generateFilename(file) {
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const extension = file.name.split('.').pop();
-  return `birthday-memories/vina-${timestamp}.${extension}`;
-}
-
-// Upload to GitHub
-async function uploadToGitHub(file) {
-  try {
-    const filename = generateFilename(file);
-    const base64Content = await fileToBase64(file);
-    
-    // Remove the data:image/...;base64, prefix
-    const base64Data = base64Content.split(',')[1];
-    
-    const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/${filename}`;
-    
-    const response = await fetch(url, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `token ${GITHUB_CONFIG.token}`,
-        'Content-Type': 'application/json',
-        'Accept': 'application/vnd.github.v3+json'
-      },
-      body: JSON.stringify({
-        message: `Add birthday photo: ${filename}`,
-        content: base64Data,
-        branch: GITHUB_CONFIG.branch
-      })
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      return {
-        success: true,
-        data: data,
-        downloadUrl: data.content.download_url,
-        htmlUrl: data.content.html_url
-      };
-    } else {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Upload failed');
-    }
-  } catch (error) {
-    return {
-      success: false,
-      error: error.message
-    };
-  }
-}
-
-// Updated saveMemory function
-async function saveMemory() {
-  if (!uploadedPhoto) {
-    showStatus('Please select a photo first!', 'error');
-    return;
-  }
-
-  if (GITHUB_CONFIG.token === 'YOUR_GITHUB_TOKEN_HERE') {
-    showStatus('GitHub token not configured. Please add your token to upload photos.', 'error');
-    return;
-  }
-
-  const saveBtn = document.querySelector('.next-btn');
-  const originalText = saveBtn.innerHTML;
-  
-  // Show loading state
-  saveBtn.innerHTML = '<div class="loading-spinner"></div>Uploading...';
-  saveBtn.disabled = true;
-  
-  showStatus('Uploading your photo to GitHub...', 'info');
-
-  try {
-    const result = await uploadToGitHub(uploadedPhoto);
-    
-    if (result.success) {
-      // Hide photo preview and show success message
-      document.getElementById('photoPreview').style.display = 'none';
-      document.getElementById('memorySaved').style.display = 'block';
+    function createHearts() {
+      const heartsContainer = document.getElementById('hearts');
       
-      // Show GitHub link if element exists
-      const githubLink = document.getElementById('githubLink');
-      if (githubLink) {
-        const photoLink = document.getElementById('photoLink');
-        if (photoLink) {
-          photoLink.href = result.htmlUrl;
-        }
-        githubLink.style.display = 'block';
-      }
+      // Clear existing hearts
+      heartsContainer.innerHTML = '';
       
-      showStatus('Photo uploaded successfully! 🎉', 'success');
-      createHearts();
-    } else {
-      throw new Error(result.error);
+      // Create floating hearts
+      for (let i = 0; i < 15; i++) {
+        const heart = document.createElement('div');
+        heart.innerHTML = '💖';
+        heart.className = 'heart';
+        heart.style.left = Math.random() * 100 + '%';
+        heart.style.animationDelay = Math.random() * 6 + 's';
+        heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+        heartsContainer.appendChild(heart);
+      }
     }
-  } catch (error) {
-    console.error('Upload error:', error);
-    showStatus(`Upload failed: ${error.message}`, 'error');
-  } finally {
-    // Restore button
-    saveBtn.innerHTML = originalText;
-    saveBtn.disabled = false;
-  }
-}
   </script>
 </body>
-</html> 
+</html>
