@@ -623,182 +623,162 @@
       currentStage = 6;
     }
 
-    function triggerFileInput() {
-      document.getElementById('photoInput').click();
-    }
+// Add this configuration at the top of your JavaScript file
+const GITHUB_CONFIG = {
+  owner: 'LilSixty-web',
+  repo: 'lilsixty-web.github.io',
+  token: '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', // Replace with your actual GitHub token
+  branch: 'main' // or 'master' depending on your default branch
+};
 
-    function handleFileSelect(event) {
-      const file = event.target.files[0];
-      if (file && file.type.startsWith('image/')) {
-        uploadedPhoto = file;
-        displayPhoto(file);
-      }
-    }
+// Status display function
+function showStatus(message, type) {
+  const statusDiv = document.getElementById('statusMessage') || createStatusDiv();
+  statusDiv.textContent = message;
+  statusDiv.className = `status-message ${type}`;
+  statusDiv.style.display = 'block';
+  
+  // Hide after 5 seconds for success/info messages
+  if (type === 'success' || type === 'info') {
+    setTimeout(() => {
+      statusDiv.style.display = 'none';
+    }, 5000);
+  }
+}
 
-    function displayPhoto(file) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const preview = document.getElementById('preview');
-        preview.src = e.target.result;
-        
-        // Hide upload area and show preview
-        document.getElementById('uploadArea').style.display = 'none';
-        document.getElementById('photoPreview').style.display = 'block';
+function createStatusDiv() {
+  const statusDiv = document.createElement('div');
+  statusDiv.id = 'statusMessage';
+  statusDiv.style.cssText = `
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    z-index: 1000;
+    display: none;
+  `;
+  document.body.appendChild(statusDiv);
+  return statusDiv;
+}
+
+// Convert file to base64
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+  });
+}
+
+// Generate unique filename
+function generateFilename(file) {
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const extension = file.name.split('.').pop();
+  return `birthday-memories/vina-${timestamp}.${extension}`;
+}
+
+// Upload to GitHub
+async function uploadToGitHub(file) {
+  try {
+    const filename = generateFilename(file);
+    const base64Content = await fileToBase64(file);
+    
+    // Remove the data:image/...;base64, prefix
+    const base64Data = base64Content.split(',')[1];
+    
+    const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${filename}`;
+    
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${GITHUB_CONFIG.token}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/vnd.github.v3+json'
+      },
+      body: JSON.stringify({
+        message: `Add birthday photo: ${filename}`,
+        content: base64Data,
+        branch: GITHUB_CONFIG.branch
+      })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      return {
+        success: true,
+        data: data,
+        downloadUrl: data.content.download_url,
+        htmlUrl: data.content.html_url
       };
-      reader.readAsDataURL(file);
+    } else {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Upload failed');
     }
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message
+    };
+  }
+}
 
-    function changePhoto() {
-      // Show upload area and hide preview
-      document.getElementById('uploadArea').style.display = 'flex';
-      document.getElementById('photoPreview').style.display = 'none';
-      
-      // Reset file input
-      document.getElementById('photoInput').value = '';
-      uploadedPhoto = null;
-    }
+// Updated saveMemory function
+async function saveMemory() {
+  if (!uploadedPhoto) {
+    showStatus('Please select a photo first!', 'error');
+    return;
+  }
 
-    function saveMemory() {
-      if (uploadedPhoto) {
-        // Hide photo preview and show success message
-        document.getElementById('photoPreview').style.display = 'none';
-        document.getElementById('memorySaved').style.display = 'block';
-        
-        // Store the photo in memory (since we can't use localStorage)
-        console.log('Photo saved:', uploadedPhoto.name);
-        
-        // Create some celebration effects
-        createHearts();
-      }
-    }
+  if (GITHUB_CONFIG.token === 'YOUR_GITHUB_TOKEN_HERE') {
+    showStatus('GitHub token not configured. Please add your token to upload photos.', 'error');
+    return;
+  }
 
-    function restartExperience() {
-      // Reset everything
-      for (let i = 1; i <= 6; i++) {
-        const stage = document.getElementById('stage' + i);
-        if (stage) stage.classList.remove('active');
-      }
-      
-      // Reset upload area
-      document.getElementById('uploadArea').style.display = 'flex';
-      document.getElementById('photoPreview').style.display = 'none';
-      document.getElementById('memorySaved').style.display = 'none';
-      document.getElementById('photoInput').value = '';
-      uploadedPhoto = null;
-      
-      // Go back to stage 1
-      document.getElementById('stage1').classList.add('active');
-      currentStage = 1;
-    }
+  const saveBtn = document.querySelector('.next-btn');
+  const originalText = saveBtn.innerHTML;
+  
+  // Show loading state
+  saveBtn.innerHTML = '<div class="loading-spinner"></div>Uploading...';
+  saveBtn.disabled = true;
+  
+  showStatus('Uploading your photo to GitHub...', 'info');
 
-    function createHearts() {
-      const heartsContainer = document.getElementById('hearts');
-      const heartSymbols = ['💖', '💕', '💗', '💝', '🌸', '🎀', '✨'];
-      
-      // Reduce number of hearts on mobile for better performance
-      const heartCount = window.innerWidth < 768 ? 10 : 20;
-      
-      for (let i = 0; i < heartCount; i++) {
-        setTimeout(() => {
-          const heart = document.createElement('div');
-          heart.className = 'heart';
-          heart.innerHTML = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
-          heart.style.left = Math.random() * 100 + '%';
-          heart.style.animationDelay = Math.random() * 2 + 's';
-          heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
-          heartsContainer.appendChild(heart);
-          
-          // Remove heart after animation
-          setTimeout(() => {
-            if (heart.parentNode) {
-              heart.parentNode.removeChild(heart);
-            }
-          }, 7000);
-        }, i * 200);
-      }
-    }
-
-    // Create floating hearts periodically when on final stage
-    let heartInterval;
+  try {
+    const result = await uploadToGitHub(uploadedPhoto);
     
-    function startHeartAnimation() {
-      heartInterval = setInterval(() => {
-        if (currentStage === 3 || currentStage === 6) {
-          const heartsContainer = document.getElementById('hearts');
-          const heart = document.createElement('div');
-          heart.className = 'heart';
-          heart.innerHTML = ['💖', '💕', '🌸'][Math.floor(Math.random() * 3)];
-          heart.style.left = Math.random() * 100 + '%';
-          heart.style.animationDuration = (Math.random() * 2 + 5) + 's';
-          heartsContainer.appendChild(heart);
-          
-          setTimeout(() => {
-            if (heart.parentNode) {
-              heart.parentNode.removeChild(heart);
-            }
-          }, 7000);
+    if (result.success) {
+      // Hide photo preview and show success message
+      document.getElementById('photoPreview').style.display = 'none';
+      document.getElementById('memorySaved').style.display = 'block';
+      
+      // Show GitHub link if element exists
+      const githubLink = document.getElementById('githubLink');
+      if (githubLink) {
+        const photoLink = document.getElementById('photoLink');
+        if (photoLink) {
+          photoLink.href = result.htmlUrl;
         }
-      }, 4000);
+        githubLink.style.display = 'block';
+      }
+      
+      showStatus('Photo uploaded successfully! 🎉', 'success');
+      createHearts();
+    } else {
+      throw new Error(result.error);
     }
-
-    // Drag and drop functionality
-    const uploadArea = document.getElementById('uploadArea');
-    
-    uploadArea.addEventListener('dragover', function(e) {
-      e.preventDefault();
-      uploadArea.classList.add('dragover');
-    });
-    
-    uploadArea.addEventListener('dragleave', function(e) {
-      e.preventDefault();
-      uploadArea.classList.remove('dragover');
-    });
-    
-    uploadArea.addEventListener('drop', function(e) {
-      e.preventDefault();
-      uploadArea.classList.remove('dragover');
-      
-      const files = e.dataTransfer.files;
-      if (files.length > 0 && files[0].type.startsWith('image/')) {
-        uploadedPhoto = files[0];
-        displayPhoto(files[0]);
-      }
-    });
-
-    // Start heart animation after page load
-    window.addEventListener('load', startHeartAnimation);
-
-    // Pause animations when page is not visible (battery optimization)
-    document.addEventListener('visibilitychange', function() {
-      if (document.hidden) {
-        if (heartInterval) clearInterval(heartInterval);
-      } else {
-        if (currentStage === 3 || currentStage === 6) startHeartAnimation();
-      }
-    });
-
-    // Add touch feedback
-    document.querySelectorAll('.next-btn, .choice-btn').forEach(button => {
-      button.addEventListener('touchstart', function() {
-        this.style.transform = 'translateY(-2px) scale(1.02)';
-      });
-      
-      button.addEventListener('touchend', function() {
-        setTimeout(() => {
-          this.style.transform = '';
-        }, 150);
-      });
-    });
-
-    // Prevent zoom on double tap for better mobile experience
-    let lastTouchEnd = 0;
-    document.addEventListener('touchend', function (event) {
-      const now = (new Date()).getTime();
-      if (now - lastTouchEnd <= 300) {
-        event.preventDefault();
-      }
-      lastTouchEnd = now;
-    }, false);
+  } catch (error) {
+    console.error('Upload error:', error);
+    showStatus(`Upload failed: ${error.message}`, 'error');
+  } finally {
+    // Restore button
+    saveBtn.innerHTML = originalText;
+    saveBtn.disabled = false;
+  }
+}
   </script>
 </body>
 </html> 
