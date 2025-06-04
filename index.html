@@ -577,302 +577,208 @@
   <script>
     let currentStage = 1;
     let uploadedPhoto = null;
-    let githubConfig = {
-      owner: 'LilSixty-web',
-      repo: 'lilsixty-web.github.io',
-      token: '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',
-      branch: 'main'
-    };
 
-    // Initialize the app
+    // Add loading state management
+    window.addEventListener('load', function() {
+      document.body.classList.remove('loading');
+      document.body.classList.add('loaded');
+    });
+
     function nextStage() {
       document.getElementById('stage1').classList.remove('active');
       document.getElementById('stage2').classList.add('active');
       currentStage = 2;
     }
 
-    // Save GitHub configuration
-    function saveConfig() {
-      const owner = document.getElementById('githubOwner').value.trim();
-      const repo = document.getElementById('githubRepo').value.trim();
-      const token = document.getElementById('githubToken').value.trim();
-      const branch = document.getElementById('githubBranch').value.trim() || 'main';
-
-      if (!owner || !repo || !token) {
-        showStatus('Please fill in all required fields', 'error');
-        return;
+    function openGift() {
+      // Hide all stages
+      for (let i = 1; i <= 6; i++) {
+        const stage = document.getElementById('stage' + i);
+        if (stage) stage.classList.remove('active');
       }
-
-      githubConfig = { owner, repo, token, branch };
-      
-      // Store in session storage for this session only
-      sessionStorage.setItem('githubConfig', JSON.stringify(githubConfig));
-      
-      showStatus('Configuration saved! Ready to upload photos 🎉', 'success');
-      
-      // Move to photo upload stage
-      document.getElementById('stage2').classList.remove('active');
+      // Show final message
       document.getElementById('stage3').classList.add('active');
       currentStage = 3;
+      createHearts();
     }
 
-    // Load saved configuration
-    function loadConfig() {
-      const saved = sessionStorage.getItem('githubConfig');
-      if (saved) {
-        githubConfig = JSON.parse(saved);
-        document.getElementById('githubOwner').value = githubConfig.owner;
-        document.getElementById('githubRepo').value = githubConfig.repo;
-        document.getElementById('githubToken').value = githubConfig.token;
-        document.getElementById('githubBranch').value = githubConfig.branch;
+    function sayNo() {
+      document.getElementById('stage2').classList.remove('active');
+      document.getElementById('stage4').classList.add('active');
+      currentStage = 4;
+    }
+
+    function reallyNo() {
+      document.getElementById('stage4').classList.remove('active');
+      document.getElementById('stage5').classList.add('active');
+      currentStage = 5;
+    }
+
+    function toUploadStage() {
+      for (let i = 1; i <= 6; i++) {
+        const stage = document.getElementById('stage' + i);
+        if (stage) stage.classList.remove('active');
       }
+      document.getElementById('stage6').classList.add('active');
+      currentStage = 6;
     }
 
-    // File handling functions
-    function triggerFileInput() {
-      document.getElementById('photoInput').click();
-    }
+// Add this configuration at the top of your JavaScript file
+const GITHUB_CONFIG = {
+  owner: 'LilSixty-web',
+  repo: 'lilsixty-web.github.io',
+  token: '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', // Replace with your actual GitHub token
+  branch: 'main' // or 'master' depending on your default branch
+};
 
-    function handleFileSelect(event) {
-      const file = event.target.files[0];
-      if (file) {
-        if (file.size > 25 * 1024 * 1024) { // 25MB limit for GitHub
-          showStatus('File too large! Please choose a file smaller than 25MB', 'error');
-          return;
-        }
-        
-        uploadedPhoto = file;
-        displayPhotoPreview(file);
-      }
-    }
+// Status display function
+function showStatus(message, type) {
+  const statusDiv = document.getElementById('statusMessage') || createStatusDiv();
+  statusDiv.textContent = message;
+  statusDiv.className = `status-message ${type}`;
+  statusDiv.style.display = 'block';
+  
+  // Hide after 5 seconds for success/info messages
+  if (type === 'success' || type === 'info') {
+    setTimeout(() => {
+      statusDiv.style.display = 'none';
+    }, 5000);
+  }
+}
 
-    function displayPhotoPreview(file) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        document.getElementById('preview').src = e.target.result;
-        document.getElementById('uploadArea').style.display = 'none';
-        document.getElementById('photoPreview').style.display = 'block';
-      };
-      reader.readAsDataURL(file);
-    }
+function createStatusDiv() {
+  const statusDiv = document.createElement('div');
+  statusDiv.id = 'statusMessage';
+  statusDiv.style.cssText = `
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    z-index: 1000;
+    display: none;
+  `;
+  document.body.appendChild(statusDiv);
+  return statusDiv;
+}
 
-    function changePhoto() {
-      document.getElementById('uploadArea').style.display = 'block';
-      document.getElementById('photoPreview').style.display = 'none';
-      uploadedPhoto = null;
-      document.getElementById('photoInput').value = '';
-    }
+// Convert file to base64
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+  });
+}
 
-    // Drag and drop functionality
-    function setupDragAndDrop() {
-      const uploadArea = document.getElementById('uploadArea');
-      
-      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        uploadArea.addEventListener(eventName, preventDefaults, false);
-      });
+// Generate unique filename
+function generateFilename(file) {
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const extension = file.name.split('.').pop();
+  return `birthday-memories/vina-${timestamp}.${extension}`;
+}
 
-      function preventDefaults(e) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-
-      ['dragenter', 'dragover'].forEach(eventName => {
-        uploadArea.addEventListener(eventName, () => uploadArea.classList.add('dragover'), false);
-      });
-
-      ['dragleave', 'drop'].forEach(eventName => {
-        uploadArea.addEventListener(eventName, () => uploadArea.classList.remove('dragover'), false);
-      });
-
-      uploadArea.addEventListener('drop', handleDrop, false);
-
-      function handleDrop(e) {
-        const dt = e.dataTransfer;
-        const files = dt.files;
-        if (files.length > 0) {
-          const file = files[0];
-          if (file.type.startsWith('image/')) {
-            uploadedPhoto = file;
-            displayPhotoPreview(file);
-          } else {
-            showStatus('Please drop an image file', 'error');
-          }
-        }
-      }
-    }
-
-    // Status message functions
-    function showStatus(message, type) {
-      // Remove existing status messages
-      const existing = document.querySelectorAll('.status-message');
-      existing.forEach(el => el.remove());
-
-      const statusDiv = document.createElement('div');
-      statusDiv.className = `status-message ${type}`;
-      statusDiv.textContent = message;
-      document.body.appendChild(statusDiv);
-      
-      // Auto-hide after 5 seconds for success/info messages
-      if (type === 'success' || type === 'info') {
-        setTimeout(() => {
-          if (statusDiv.parentNode) {
-            statusDiv.remove();
-          }
-        }, 5000);
-      }
-    }
-
-    // GitHub upload functions
-    function fileToBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-      });
-    }
-
-    function generateFilename(file) {
-      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-      const extension = file.name.split('.').pop();
-      return `birthday-memories/vina-${timestamp}.${extension}`;
-    }
-
-    async function uploadToGitHub(file) {
-      try {
-        if (!githubConfig.owner || !githubConfig.repo || !githubConfig.token) {
-          throw new Error('GitHub configuration is incomplete');
-        }
-
-        const filename = generateFilename(file);
-        const base64Content = await fileToBase64(file);
-        const base64Data = base64Content.split(',')[1];
-        
-        const url = `https://api.github.com/repos/${githubConfig.owner}/${githubConfig.repo}/contents/${filename}`;
-        
-        const response = await fetch(url, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `token ${githubConfig.token}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/vnd.github.v3+json'
-          },
-          body: JSON.stringify({
-            message: `Add birthday photo: ${filename}`,
-            content: base64Data,
-            branch: githubConfig.branch
-          })
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          return {
-            success: true,
-            data: data,
-            downloadUrl: data.content.download_url,
-            htmlUrl: data.content.html_url
-          };
-        } else {
-          const errorData = await response.json();
-          throw new Error(errorData.message || `Upload failed: ${response.status}`);
-        }
-      } catch (error) {
-        return {
-          success: false,
-          error: error.message
-        };
-      }
-    }
-
-    async function saveMemory() {
-      if (!uploadedPhoto) {
-        showStatus('Please select a photo first!', 'error');
-        return;
-      }
-
-      const saveBtn = document.querySelector('#photoPreview .next-btn');
-      const originalText = saveBtn.innerHTML;
-      
-      // Show loading state
-      saveBtn.innerHTML = '<div class="loading-spinner"></div>Uploading...';
-      saveBtn.disabled = true;
-      
-      showStatus('Uploading your photo to GitHub...', 'info');
-
-      try {
-        const result = await uploadToGitHub(uploadedPhoto);
-        
-        if (result.success) {
-          // Hide photo preview and show success message
-          document.getElementById('photoPreview').style.display = 'none';
-          document.getElementById('memorySaved').style.display = 'block';
-          
-          // Show GitHub link
-          const githubLink = document.getElementById('githubLink');
-          const photoLink = document.getElementById('photoLink');
-          if (githubLink && photoLink) {
-            photoLink.href = result.htmlUrl;
-            githubLink.style.display = 'block';
-          }
-          
-          showStatus('Photo uploaded successfully! 🎉', 'success');
-          createHearts();
-        } else {
-          throw new Error(result.error);
-        }
-      } catch (error) {
-        console.error('Upload error:', error);
-        showStatus(`Upload failed: ${error.message}`, 'error');
-      } finally {
-        // Restore button
-        saveBtn.innerHTML = originalText;
-        saveBtn.disabled = false;
-      }
-    }
-
-    function restartExperience() {
-      // Reset everything
-      uploadedPhoto = null;
-      document.getElementById('photoInput').value = '';
-      document.getElementById('uploadArea').style.display = 'block';
-      document.getElementById('photoPreview').style.display = 'none';
-      document.getElementById('memorySaved').style.display = 'none';
-      document.getElementById('githubLink').style.display = 'none';
-      
-      // Clear hearts
-      document.getElementById('hearts').innerHTML = '';
-    }
-
-    // Heart animation
-    function createHearts() {
-      const heartsContainer = document.getElementById('hearts');
-      
-      for (let i = 0; i < 15; i++) {
-        setTimeout(() => {
-          const heart = document.createElement('div');
-          heart.className = 'heart';
-          heart.innerHTML = ['💖', '💝', '💕', '💗', '💘'][Math.floor(Math.random() * 5)];
-          heart.style.left = Math.random() * 100 + 'vw';
-          heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
-          heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
-          
-          heartsContainer.appendChild(heart);
-          
-          // Remove heart after animation
-          setTimeout(() => {
-            if (heart.parentNode) {
-              heart.remove();
-            }
-          }, 5000);
-        }, i * 200);
-      }
-    }
-
-    // Initialize everything when page loads
-    window.addEventListener('load', function() {
-      setupDragAndDrop();
-      loadConfig();
+// Upload to GitHub
+async function uploadToGitHub(file) {
+  try {
+    const filename = generateFilename(file);
+    const base64Content = await fileToBase64(file);
+    
+    // Remove the data:image/...;base64, prefix
+    const base64Data = base64Content.split(',')[1];
+    
+    const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/${filename}`;
+    
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${GITHUB_CONFIG.token}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/vnd.github.v3+json'
+      },
+      body: JSON.stringify({
+        message: `Add birthday photo: ${filename}`,
+        content: base64Data,
+        branch: GITHUB_CONFIG.branch
+      })
     });
+
+    if (response.ok) {
+      const data = await response.json();
+      return {
+        success: true,
+        data: data,
+        downloadUrl: data.content.download_url,
+        htmlUrl: data.content.html_url
+      };
+    } else {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Upload failed');
+    }
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message
+    };
+  }
+}
+
+// Updated saveMemory function
+async function saveMemory() {
+  if (!uploadedPhoto) {
+    showStatus('Please select a photo first!', 'error');
+    return;
+  }
+
+  if (GITHUB_CONFIG.token === 'YOUR_GITHUB_TOKEN_HERE') {
+    showStatus('GitHub token not configured. Please add your token to upload photos.', 'error');
+    return;
+  }
+
+  const saveBtn = document.querySelector('.next-btn');
+  const originalText = saveBtn.innerHTML;
+  
+  // Show loading state
+  saveBtn.innerHTML = '<div class="loading-spinner"></div>Uploading...';
+  saveBtn.disabled = true;
+  
+  showStatus('Uploading your photo to GitHub...', 'info');
+
+  try {
+    const result = await uploadToGitHub(uploadedPhoto);
+    
+    if (result.success) {
+      // Hide photo preview and show success message
+      document.getElementById('photoPreview').style.display = 'none';
+      document.getElementById('memorySaved').style.display = 'block';
+      
+      // Show GitHub link if element exists
+      const githubLink = document.getElementById('githubLink');
+      if (githubLink) {
+        const photoLink = document.getElementById('photoLink');
+        if (photoLink) {
+          photoLink.href = result.htmlUrl;
+        }
+        githubLink.style.display = 'block';
+      }
+      
+      showStatus('Photo uploaded successfully! 🎉', 'success');
+      createHearts();
+    } else {
+      throw new Error(result.error);
+    }
+  } catch (error) {
+    console.error('Upload error:', error);
+    showStatus(`Upload failed: ${error.message}`, 'error');
+  } finally {
+    // Restore button
+    saveBtn.innerHTML = originalText;
+    saveBtn.disabled = false;
+  }
+}
   </script>
 </body>
 </html> 
