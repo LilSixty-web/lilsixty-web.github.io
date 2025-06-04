@@ -18,7 +18,7 @@
       background-size: 400% 400%;
       animation: gradientShift 8s ease infinite;
       min-height: 100vh;
-      min-height: 100dvh; /* Dynamic viewport height for mobile */
+      min-height: 100dvh;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -117,6 +117,12 @@
       line-height: 1.3;
     }
 
+    h3 {
+      font-size: clamp(1.2rem, 3.5vw, 1.5rem);
+      color: #d63384;
+      margin-bottom: 10px;
+    }
+
     p {
       font-size: clamp(1rem, 3vw, 1.1rem);
       color: #8e3a59;
@@ -150,7 +156,7 @@
       font-weight: bold;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      min-height: 44px; /* Minimum touch target size */
+      min-height: 44px;
       min-width: 44px;
       display: inline-flex;
       align-items: center;
@@ -268,7 +274,6 @@
       50% { opacity: 0.7; transform: scale(1.03); }
     }
 
-    /* Button layout for mobile */
     .button-container {
       display: flex;
       flex-direction: column;
@@ -283,7 +288,106 @@
       }
     }
 
-    /* Reduce animations on mobile to save battery */
+    /* Upload Styles */
+    .upload-container {
+      margin: 20px 0;
+    }
+
+    .upload-area {
+      border: 3px dashed #ff6b9d;
+      border-radius: 15px;
+      padding: 30px 20px;
+      background: rgba(255, 182, 193, 0.1);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .upload-area:hover {
+      background: rgba(255, 182, 193, 0.2);
+      border-color: #e91e63;
+      transform: scale(1.02);
+    }
+
+    .upload-area.dragover {
+      background: rgba(255, 182, 193, 0.3);
+      border-color: #d63384;
+    }
+
+    .upload-icon {
+      font-size: 3rem;
+      margin-bottom: 10px;
+      animation: bounce 2s infinite;
+    }
+
+    .file-input {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .photo-preview {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      padding: 20px;
+      border: 2px solid #ff6b9d;
+    }
+
+    .photo-preview img {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 10px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      margin-bottom: 15px;
+    }
+
+    .photo-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .memory-saved {
+      text-align: center;
+      background: linear-gradient(135deg, rgba(255, 182, 193, 0.3), rgba(255, 105, 157, 0.2));
+      border-radius: 15px;
+      padding: 30px;
+      border: 2px solid #ff6b9d;
+    }
+
+    .success-animation {
+      font-size: 4rem;
+      animation: successBounce 1s ease-out;
+      margin-bottom: 15px;
+    }
+
+    @keyframes successBounce {
+      0% { transform: scale(0) rotate(0deg); }
+      50% { transform: scale(1.2) rotate(180deg); }
+      100% { transform: scale(1) rotate(360deg); }
+    }
+
+    .audio-animate {
+      box-shadow: 0 0 10px #ff6b9d, 0 0 20px #ffc3e1;
+      animation: audioPulse 2.5s infinite alternate;
+    }
+
+    @keyframes audioPulse {
+      from { box-shadow: 0 0 10px #ff6b9d, 0 0 20px #ffc3e1; }
+      to { box-shadow: 0 0 20px #ffb3d9, 0 0 30px #ff6b9d; }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       * {
         animation-duration: 0.01ms !important;
@@ -292,7 +396,6 @@
       }
     }
 
-    /* Dark mode support */
     @media (prefers-color-scheme: dark) {
       .card {
         background: white;
@@ -307,7 +410,6 @@
       }
     }
 
-    /* Landscape orientation adjustments */
     @media (orientation: landscape) and (max-height: 500px) {
       body {
         padding: 5px;
@@ -326,7 +428,6 @@
       }
     }
 
-    /* Very small screens */
     @media (max-width: 320px) {
       .card {
         padding: 15px;
@@ -340,7 +441,6 @@
       }
     }
 
-    /* Loading state for better perceived performance */
     .loading {
       opacity: 0;
       transition: opacity 0.3s ease;
@@ -382,21 +482,38 @@
       <!-- Stage 3: Final Message -->
       <div class="stage" id="stage3">
         <div class="birthday-message">
-          <h1>Hi Vina!👋</h1>
-          <p>Happy special birthday to someone truly unforgettable. Today, the world feels a little brighter, because it's the day you came into it. 🌸</p>
-          
-          <p>Across oceans, beneath stars, and under the same sky, I somehow found myself walking beside you. What are the odds that amidst all the galaxies, I'd meet someone who feels like home? ⭐🌍</p>
-          
-          <p>You bring light where there's dullness, calm in the chaos, and warmth that stays long after the moment passes. Your presence makes everything more beautiful.</p>
-          
-          <p>May this next chapter of your life overflow with joy, wonder, and all the love you deserve. Hope you live a long, healthy life, and I wish you find a man who’s just your type and never makes you cry or breaks your heart.</p>
-          
-          <p>Happy birthday, VINAAA. 🎂✨</p>
+          <h1><span aria-label="waving hand" role="img">👋</span> <strong>Hi Vina!</strong></h1>
+          <p>
+            <span aria-label="sparkles" role="img">✨</span>
+            <strong>Happy special birthday</strong> to someone truly unforgettable.<br>
+            Today, the world feels a little brighter, because it's the day <strong>you</strong> came into it. 
+            <span aria-label="cherry blossom" role="img">🌸</span>
+          </p>
+          <p>
+            Across oceans, beneath stars, and under the same sky, I somehow found myself walking beside you.<br>
+            What are the odds that amidst all the galaxies, I'd meet someone who feels like <strong>home</strong>? 
+            <span aria-label="star" role="img">⭐</span><span aria-label="earth" role="img">🌍</span>
+          </p>
+          <p>
+            You bring <strong>light</strong> where there's dullness, <strong>calm</strong> in the chaos, and <strong>warmth</strong> that stays long after the moment passes.<br>
+            Your presence makes everything more beautiful.
+          </p>
+          <p>
+            May this next chapter of your life overflow with <strong>joy</strong>, <strong>wonder</strong>, and all the <strong>love</strong> you deserve.<br>
+            And as you chase your dreams of becoming an amazing pharmacist, I hope the path rises to meet you, filled with purpose, pride, and every success you've worked so hard for. 
+            <span aria-label="herb" role="img">🌿</span><span aria-label="pill" role="img">💊</span>
+          </p>
+          <p>
+            I'm grateful to walk this part of your journey with you.<br>
+            <strong>Happy birthday, you're a rare kind of magic.</strong> 
+            <span aria-label="birthday cake" role="img">🎂</span><span aria-label="sparkles" role="img">✨</span>
+          </p>
         </div>
-        
         <div class="space"></div>
-        
-        <audio controls preload="none" aria-label="Birthday song">
+        <div class="button-container">
+          <button class="next-btn" onclick="toUploadStage()" aria-label="Upload Photo">Click Me</button>
+        </div>
+        <audio controls preload="none" aria-label="Birthday song" class="audio-animate">
           <source src="hbd.mp3" type="audio/mp3">
           Your browser does not support the audio element.
         </audio>
@@ -424,11 +541,42 @@
           <button class="choice-btn" onclick="openGift()" aria-label="Change mind and open gift">Actually... open it! 💝</button>
         </div>
       </div>
+
+      <!-- Stage 6: Upload Photo -->
+      <div class="stage" id="stage6">
+        <h2>Capture This Moment! 📸</h2>
+        <p class="surprise-text">Selfie Sama Makanannya dong</p>
+        
+        <div class="upload-container">
+          <div class="upload-area" id="uploadArea" onclick="triggerFileInput()">
+            <div class="upload-icon">📷</div>
+            <h3>Tap to add your photo</h3>
+            <p>or drag and drop here</p>
+            <input type="file" accept="image/*" id="photoInput" class="file-input" onchange="handleFileSelect(event)">
+          </div>
+          
+          <div class="photo-preview" id="photoPreview" style="display: none;">
+            <img id="preview" src="" alt="Your photo">
+            <div class="photo-actions">
+              <button class="choice-btn" onclick="changePhoto()">Change Photo 🔄</button>
+              <button class="next-btn" onclick="saveMemory()">Save Memory ✨</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="memory-saved" id="memorySaved" style="display: none;">
+          <div class="success-animation">🎉</div>
+          <h3>Memory Saved!</h3>
+          <p>This special moment is now captured forever 💝</p>
+          <button class="next-btn" onclick="restartExperience()">Celebrate Again! 🎂</button>
+        </div>
+      </div>
     </div>
   </div>
 
   <script>
     let currentStage = 1;
+    let uploadedPhoto = null;
 
     // Add loading state management
     window.addEventListener('load', function() {
@@ -444,8 +592,9 @@
 
     function openGift() {
       // Hide all stages
-      for (let i = 1; i <= 5; i++) {
-        document.getElementById('stage' + i).classList.remove('active');
+      for (let i = 1; i <= 6; i++) {
+        const stage = document.getElementById('stage' + i);
+        if (stage) stage.classList.remove('active');
       }
       // Show final message
       document.getElementById('stage3').classList.add('active');
@@ -463,6 +612,83 @@
       document.getElementById('stage4').classList.remove('active');
       document.getElementById('stage5').classList.add('active');
       currentStage = 5;
+    }
+
+    function toUploadStage() {
+      for (let i = 1; i <= 6; i++) {
+        const stage = document.getElementById('stage' + i);
+        if (stage) stage.classList.remove('active');
+      }
+      document.getElementById('stage6').classList.add('active');
+      currentStage = 6;
+    }
+
+    function triggerFileInput() {
+      document.getElementById('photoInput').click();
+    }
+
+    function handleFileSelect(event) {
+      const file = event.target.files[0];
+      if (file && file.type.startsWith('image/')) {
+        uploadedPhoto = file;
+        displayPhoto(file);
+      }
+    }
+
+    function displayPhoto(file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const preview = document.getElementById('preview');
+        preview.src = e.target.result;
+        
+        // Hide upload area and show preview
+        document.getElementById('uploadArea').style.display = 'none';
+        document.getElementById('photoPreview').style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function changePhoto() {
+      // Show upload area and hide preview
+      document.getElementById('uploadArea').style.display = 'flex';
+      document.getElementById('photoPreview').style.display = 'none';
+      
+      // Reset file input
+      document.getElementById('photoInput').value = '';
+      uploadedPhoto = null;
+    }
+
+    function saveMemory() {
+      if (uploadedPhoto) {
+        // Hide photo preview and show success message
+        document.getElementById('photoPreview').style.display = 'none';
+        document.getElementById('memorySaved').style.display = 'block';
+        
+        // Store the photo in memory (since we can't use localStorage)
+        console.log('Photo saved:', uploadedPhoto.name);
+        
+        // Create some celebration effects
+        createHearts();
+      }
+    }
+
+    function restartExperience() {
+      // Reset everything
+      for (let i = 1; i <= 6; i++) {
+        const stage = document.getElementById('stage' + i);
+        if (stage) stage.classList.remove('active');
+      }
+      
+      // Reset upload area
+      document.getElementById('uploadArea').style.display = 'flex';
+      document.getElementById('photoPreview').style.display = 'none';
+      document.getElementById('memorySaved').style.display = 'none';
+      document.getElementById('photoInput').value = '';
+      uploadedPhoto = null;
+      
+      // Go back to stage 1
+      document.getElementById('stage1').classList.add('active');
+      currentStage = 1;
     }
 
     function createHearts() {
@@ -497,7 +723,7 @@
     
     function startHeartAnimation() {
       heartInterval = setInterval(() => {
-        if (currentStage === 3) {
+        if (currentStage === 3 || currentStage === 6) {
           const heartsContainer = document.getElementById('hearts');
           const heart = document.createElement('div');
           heart.className = 'heart';
@@ -512,8 +738,32 @@
             }
           }, 7000);
         }
-      }, 4000); // Slightly longer interval for mobile
+      }, 4000);
     }
+
+    // Drag and drop functionality
+    const uploadArea = document.getElementById('uploadArea');
+    
+    uploadArea.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      uploadArea.classList.add('dragover');
+    });
+    
+    uploadArea.addEventListener('dragleave', function(e) {
+      e.preventDefault();
+      uploadArea.classList.remove('dragover');
+    });
+    
+    uploadArea.addEventListener('drop', function(e) {
+      e.preventDefault();
+      uploadArea.classList.remove('dragover');
+      
+      const files = e.dataTransfer.files;
+      if (files.length > 0 && files[0].type.startsWith('image/')) {
+        uploadedPhoto = files[0];
+        displayPhoto(files[0]);
+      }
+    });
 
     // Start heart animation after page load
     window.addEventListener('load', startHeartAnimation);
@@ -523,7 +773,7 @@
       if (document.hidden) {
         if (heartInterval) clearInterval(heartInterval);
       } else {
-        if (currentStage === 3) startHeartAnimation();
+        if (currentStage === 3 || currentStage === 6) startHeartAnimation();
       }
     });
 
@@ -551,4 +801,4 @@
     }, false);
   </script>
 </body>
-</html>
+</html> 
